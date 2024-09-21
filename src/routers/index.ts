@@ -1,4 +1,5 @@
 import express from "express";
+import auth from "./auth.routes.ts";
 
 const router = express.Router();
 
@@ -62,6 +63,8 @@ router.get("/", (req: any, res) => {
 
   res.json(routes);
 });
+
+router.use("/auth", auth);
 
 router.get("/users", (req, res) => {
   res.send("Get all users");
