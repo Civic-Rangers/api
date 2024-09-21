@@ -15,6 +15,8 @@ export interface IUser extends Document {
   role: "seekers" | "donor";
   biography: string;
   photo_id: string;
+  lat: number;
+  lon: number;
   correctPassword: (
     requestPassword: string,
     userPassword: string
@@ -36,6 +38,8 @@ const UserSchema = new Schema<IUser>(
     role: { type: String, enum: ["seekers", "donor"], required: true },
     biography: { type: String },
     photo_id: { type: String },
+    lat: { type: Number, required: true },
+    lon: { type: Number, required: true },
   },
   {
     timestamps: true,

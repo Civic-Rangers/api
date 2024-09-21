@@ -78,6 +78,25 @@ export const signUp = async (
       return res.status(400).send({ message: "User already exists" });
     } else {
     }
+
+    const address = `${address_street}, ${address_city}, ${address_state}, ${address_zip}`;
+    const url = `https://nominatim.openstreetmap.org/search?q=${address.replace(
+      /\s+/g,
+      "+"
+    )}&format=json&limit=1`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "User-Agent": "hackathon2024/v1",
+      },
+    });
+    const data = await response.json();
+    if (data.length === 0) {
+      return res.status(400).json({ message: "Invalid address" });
+    }
+
+    const { lat, lon } = data[0];
     const newUser = new User({
       first_name,
       last_name,
@@ -92,6 +111,8 @@ export const signUp = async (
       role,
       biography,
       photo_id,
+      lat,
+      lon,
     });
     const user = await User.create(newUser);
     const jwtToken = createJwt({ _id: user._id as string });
