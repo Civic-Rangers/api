@@ -44,3 +44,48 @@ export const createApplication = async (
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const getApplicationById = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  try {
+    const { id } = req.params;
+    const application = await Application.findById(id);
+
+    if (!application) {
+      return res.status(404).json({ message: "Application not found" });
+    }
+
+    res.status(200).json(application);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getApplicationsByUser = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  try {
+    const spot = await Spot.findOne({ user_id: req.user?._id });
+    if (!spot) {
+      return res.status(404).json({ message: "Spot not found" });
+    }
+
+    const applications = await Application.find({
+      spot_id: spot?._id,
+      status: "pending",
+    });
+
+    if (!applications) {
+      return res.status(404).json({ message: "Applications not found" });
+    }
+
+    res.status(200).json(applications);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
