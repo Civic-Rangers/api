@@ -66,14 +66,9 @@ export const getSpotsNearAddress = async (
   res: Response
 ) => {
   try {
-    const user_id = req.user?._id;
-    const user = await User.findById(user_id);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
     const userLocation = {
-      lon: user.lon,
-      lat: user.lat,
+      lon: req.user?.lon as number,
+      lat: req.user?.lat as number,
     };
 
     const spots = await Spot.find({ status: "available" }).populate("user_id");
