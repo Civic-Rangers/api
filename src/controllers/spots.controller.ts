@@ -4,6 +4,7 @@ import path from "path";
 import Spot from "../models/spot.model";
 import { AuthenticatedRequest } from "../interfaces/auth.interface";
 import User from "../models/user.model";
+import Application, { IApplication } from "../models/application.model";
 
 export const createSpot = async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -115,6 +116,51 @@ export const getSpotsNearAddress = async (
     );
 
     res.status(200).json(spotsWithDistance);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const aprovedApplication = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  try {
+    const { spot_id, application_id } = req.body;
+    if (!application_id) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const application = await Application.findById(application_id);
+    if (!application) {
+      return res.status(404).json({ message: "Application not found" });
+    }
+
+    const spot = await Spot.findById(spot_id);
+    if (!spot) {
+      return res.status(404).json({ message: "Spot not found" });
+    }
+    const vacancy =
+      (spot.spaces ?? 0) - (spot.application_accepted?.length ?? 0);
+
+    if (vacancy <= 0) {
+      spot.status = "full";
+      spot.save();
+      return res.status(400).json({ message: "No vacancy available" });
+    } else {
+      spot.application_pending = spot.application_pending || [];
+      spot.application_pending = spot.application_pending.filter(
+        (id) => id.toString() !== (application._id as string).toString()
+      );
+
+      spot.application_accepted = spot.application_accepted || [];
+      spot.application_accepted.push(
+        application._id as unknown as IApplication
+      );
+      spot.save();
+      res.status(201).json({ message: "Application approved" });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
