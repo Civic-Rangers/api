@@ -10,7 +10,7 @@ app.use(express.json());
 
 mongoConnector();
 
-app.use("/static", express.static(path.join(__dirname, "src/static")));
+//app.use("/static", express.static(path.join(__dirname, "src/static")));
 
 app.use("/api", routes);
 
