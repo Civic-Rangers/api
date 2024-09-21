@@ -1,4 +1,5 @@
 import { Schema, model, Document } from "mongoose";
+import bcrypt from "bcrypt";
 
 interface IUser extends Document {
   first_name: string;
@@ -30,6 +31,22 @@ const UserSchema = new Schema<IUser>({
   role: { type: String, enum: ["seekers", "donor"], required: true },
   biography: { type: String },
   photo_id: { type: String },
+});
+
+UserSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    return next();
+  }
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+
+    this.password = await bcrypt.hash(this.password, salt);
+
+    next();
+  } catch (err: any) {
+    next(err);
+  }
 });
 
 const User = model<IUser>("User", UserSchema);
