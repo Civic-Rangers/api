@@ -128,7 +128,7 @@ export const aprovedApplication = async (
 ) => {
   try {
     const { spot_id, application_id } = req.body;
-    if (!application_id) {
+    if (!application_id || !spot_id) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
@@ -158,9 +158,47 @@ export const aprovedApplication = async (
       spot.application_accepted.push(
         application._id as unknown as IApplication
       );
-      spot.save();
+      await spot.save();
+
+      application.status = "accepted";
+      await application.save();
       res.status(201).json({ message: "Application approved" });
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const rejectApplication = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  try {
+    const { spot_id, application_id } = req.body;
+    if (!application_id || !spot_id) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const application = await Application.findById(application_id);
+    if (!application) {
+      return res.status(404).json({ message: "Application not found" });
+    }
+
+    const spot = await Spot.findById(spot_id);
+    if (!spot) {
+      return res.status(404).json({ message: "Spot not found" });
+    }
+
+    spot.application_pending = spot.application_pending || [];
+    spot.application_pending = spot.application_pending.filter(
+      (id) => id.toString() !== (application._id as string).toString()
+    );
+
+    application.status = "rejected";
+    await application.save();
+    await spot.save();
+    res.status(201).json({ message: "Application rejected" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
