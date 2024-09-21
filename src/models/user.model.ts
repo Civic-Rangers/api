@@ -1,7 +1,7 @@
 import { Schema, model, Document } from "mongoose";
 import bcrypt from "bcrypt";
 
-interface IUser extends Document {
+export interface IUser extends Document {
   first_name: string;
   last_name: string;
   address_street: string;
@@ -21,21 +21,26 @@ interface IUser extends Document {
   ) => Promise<boolean>;
 }
 
-const UserSchema = new Schema<IUser>({
-  first_name: { type: String, required: true },
-  last_name: { type: String, required: true },
-  address_street: { type: String, required: true },
-  address_state: { type: String, required: true },
-  address_zip: { type: String, required: true },
-  address_city: { type: String, required: true },
-  phone: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  dob: { type: Date, required: true },
-  password: { type: String, required: true, minlength: 8, select: false },
-  role: { type: String, enum: ["seekers", "donor"], required: true },
-  biography: { type: String },
-  photo_id: { type: String },
-});
+const UserSchema = new Schema<IUser>(
+  {
+    first_name: { type: String, required: true },
+    last_name: { type: String, required: true },
+    address_street: { type: String, required: true },
+    address_state: { type: String, required: true },
+    address_zip: { type: String, required: true },
+    address_city: { type: String, required: true },
+    phone: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    dob: { type: Date, required: true },
+    password: { type: String, required: true, minlength: 8, select: false },
+    role: { type: String, enum: ["seekers", "donor"], required: true },
+    biography: { type: String },
+    photo_id: { type: String },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 UserSchema.pre<IUser>("save", async function (next) {
   try {

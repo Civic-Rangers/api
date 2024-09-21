@@ -70,6 +70,6 @@ router.get("/", (req: any, res) => {
 router.use("/auth", auth);
 
 router.use("/spots", spots);
-router.use("/application", application);
+router.use("/applications", application);
 
 export default router;
