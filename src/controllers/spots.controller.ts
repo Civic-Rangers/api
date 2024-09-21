@@ -5,33 +5,15 @@ import Spot from "../models/spot.model";
 import { AuthenticatedRequest } from "../interfaces/auth.interface";
 import User from "../models/user.model";
 import Application, { IApplication } from "../models/application.model";
+import { uploadImage } from "../utils/uploadImage";
 
 export const createSpot = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const file = req.file;
     const user_data = req.user;
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     if (file) {
-      const { buffer, originalname } = file;
-
-      const fileExtension = path.extname(originalname).toLowerCase();
-
-      if (
-        fileExtension !== ".jpg" &&
-        fileExtension !== ".jpeg" &&
-        fileExtension !== ".png"
-      ) {
-        return res.status(400).json({ error: "Invalid file type" });
-      }
-      const filename = `${uniqueSuffix}`;
-      const uploadPath = path.join(
-        __dirname,
-        "../static",
-        `${filename}${fileExtension}`
-      );
-
-      fs.writeFileSync(uploadPath, buffer);
-      req.body.photo_id = filename;
+      const url = await uploadImage(file);
+      req.body.photo_id = url;
     } else {
       return res.status(400).json({ message: "File is required" });
     }
@@ -44,7 +26,7 @@ export const createSpot = async (req: AuthenticatedRequest, res: Response) => {
       user_id: user_data?._id,
       spaces,
       status: "available",
-      photo_id: uniqueSuffix,
+      photo_id: req.body.photo_id,
       description,
       suggestions,
     });
