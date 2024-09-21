@@ -1,6 +1,8 @@
 import { mongoConnector } from "./utils/mongooseConnection";
 import express from "express";
 import path from "path";
+import cors from "cors";
+
 import routes from "./routers";
 import cors from "cors";
 
@@ -9,6 +11,7 @@ const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use(cors());
 
 mongoConnector();
 
