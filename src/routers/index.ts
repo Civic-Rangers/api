@@ -1,6 +1,8 @@
 import express from "express";
 import auth from "./auth.routes";
 
+import user from "./user.routes";
+
 const router = express.Router();
 
 router.get("/", (req: any, res) => {
@@ -66,64 +68,6 @@ router.get("/", (req: any, res) => {
 
 router.use("/auth", auth);
 
-router.get("/users", (req, res) => {
-  res.send("Get all users");
-});
-
-router.post("/users", (req, res) => {
-  res.send("Create a new user");
-});
-
-router.get("/users/:id", (req, res) => {
-  res.send(`Get user with id ${req.params.id}`);
-});
-
-router.put("/users/:id", (req, res) => {
-  res.send(`Update user with id ${req.params.id}`);
-});
-
-router.delete("/users/:id", (req, res) => {
-  res.send(`Delete user with id ${req.params.id}`);
-});
-
-router.get("/spots", (req, res) => {
-  res.send("Get all spots");
-});
-
-router.post("/spots", (req, res) => {
-  res.send("Create a new spot");
-});
-
-router.get("/spots/:id", (req, res) => {
-  res.send(`Get spot with id ${req.params.id}`);
-});
-
-router.put("/spots/:id", (req, res) => {
-  res.send(`Update spot with id ${req.params.id}`);
-});
-
-router.delete("/spots/:id", (req, res) => {
-  res.send(`Delete spot with id ${req.params.id}`);
-});
-
-router.get("/applications", (req, res) => {
-  res.send("Get all applications");
-});
-
-router.post("/applications", (req, res) => {
-  res.send("Create a new application");
-});
-
-router.get("/applications/:id", (req, res) => {
-  res.send(`Get application with id ${req.params.id}`);
-});
-
-router.put("/applications/:id", (req, res) => {
-  res.send(`Update application with id ${req.params.id}`);
-});
-
-router.delete("/applications/:id", (req, res) => {
-  res.send(`Delete application with id ${req.params.id}`);
-});
+router.use("/users", user);
 
 export default router;
