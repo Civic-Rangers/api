@@ -79,7 +79,7 @@ export const signUp = async (
     } else {
     }
 
-    const address = `${address_street}, ${address_city}, ${address_state}, ${address_zip}`;
+    const address = `${address_street}, ${address_state}, ${address_zip}`;
     const url = `https://nominatim.openstreetmap.org/search?q=${address.replace(
       /\s+/g,
       "+"
