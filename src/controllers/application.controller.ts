@@ -7,7 +7,11 @@ export const createApplication = async (
   res: Response
 ) => {
   try {
-    const { user_id, spot_id, message, vehicle_type } = req.body;
+    const user_id = req.user?._id;
+    const { spot_id, message, vehicle_type } = req.body;
+    if (!spot_id || !message || !vehicle_type) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
     const newApplication = new Application({
       user_id,
       spot_id,
