@@ -1,7 +1,8 @@
 import express from "express";
 import auth from "./auth.routes";
 
-import user from "./user.routes";
+import spots from "./spots.routes";
+import application from "./application.routes";
 
 const router = express.Router();
 
@@ -68,6 +69,7 @@ router.get("/", (req: any, res) => {
 
 router.use("/auth", auth);
 
-router.use("/users", user);
+router.use("/spots", spots);
+router.use("/application", application);
 
 export default router;
